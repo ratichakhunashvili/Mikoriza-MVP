@@ -40,11 +40,17 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!this.state.failed) return this.props.children;
     if (this.props.fallback !== undefined) return this.props.fallback;
     return (
-      <div role="alert" className="flex min-h-screen flex-col items-center justify-center gap-4 bg-cream px-6 text-center text-espresso">
-        <h1 className="font-display text-3xl font-semibold">გვერდი ვერ ჩაიტვირთა</h1>
-        <p className="max-w-md">მოხდა მოულოდნელი შეცდომა. განაახლეთ გვერდი.</p>
-        <button type="button" className="min-h-11 rounded-lg bg-espresso px-5 font-semibold text-cream hover:bg-umber" onClick={() => window.location.reload()}>
-          განახლება
+      <div role="alert" className="fixed inset-x-4 top-4 z-[200] mx-auto flex max-w-lg items-center justify-between gap-4 rounded-xl border border-brick/30 bg-cream px-4 py-3 text-sm text-espresso shadow-lift">
+        <p>მოხდა მოულოდნელი შეცდომა. სცადეთ ხელახლა.</p>
+        <button
+          type="button"
+          className="min-h-11 shrink-0 rounded-lg bg-espresso px-4 font-semibold text-cream hover:bg-umber"
+          onClick={() => {
+            this.retries = 0;
+            this.setState({ failed: false });
+          }}
+        >
+          ხელახლა ცდა
         </button>
       </div>
     );
