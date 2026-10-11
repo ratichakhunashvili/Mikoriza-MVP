@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background: #e2d9cc;
+    color: #2e211e;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply font-sans text-[16px] leading-relaxed antialiased;
+    background: #e2d9cc;
+    min-height: 100vh;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 2px solid #2e211e;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .on-dark :focus-visible { outline-color: #e2d9cc; }
+  .grid > * { min-width: 0; }
+  ::selection { background: #6d5e51; color: #e2d9cc; }
+  input, select, textarea {
+    @apply w-full rounded-lg border border-umber/50 bg-cream px-3 py-2.5 text-[15px] text-espresso;
+  }
+  input::placeholder, textarea::placeholder { color: #6d5e51; }
+  label { @apply text-sm font-semibold; }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-umber/15 bg-sand/30 p-5 sm:p-6;
+  }
+  .panel-dark {
+    @apply on-dark rounded-2xl bg-espresso p-5 text-cream sm:p-6;
+  }
+  .num {
+    font-family: Fraunces, 'Noto Serif Georgian', Georgia, serif;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .h-section {
+    @apply font-display text-[clamp(1.75rem,4.2vw,3rem)] font-semibold leading-[1.15] tracking-tight;
+  }
+  .container-x {
+    @apply mx-auto w-full max-w-[1200px] px-5 sm:px-8;
+  }
+}
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes breathe {
+  0%, 100% { opacity: .45; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.35); }
+}
+
+/* მიცელიუმის ხაზების ერთჯერადი ამოხატვა */
+.mycelium path.draw {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mycelium path.draw { animation: draw 2.6s ease-out forwards; }
+  .probe-dot { transform-origin: center; transform-box: fill-box; animation: breathe 3.6s ease-in-out infinite; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .mycelium path.draw { stroke-dashoffset: 0; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

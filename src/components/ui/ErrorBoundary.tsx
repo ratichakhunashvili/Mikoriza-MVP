@@ -1,0 +1,52 @@
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+
+interface Props {
+  children: ReactNode;
+  /** თუ მითითებულია, შეცდომის შემდეგ ამ შიგთავსს აჩვენებს (მაგ. ერთი გრაფიკის ადგილას) */
+  fallback?: ReactNode;
+}
+interface State {
+  failed: boolean;
+}
+
+/**
+ * შეცდომის შემდეგ ჯერ ავტომატურად ცდილობს თავიდან ჩატვირთვას (მომხმარებელი ამას ვერ ამჩნევს).
+ * მხოლოდ განმეორებითი წარუმატებლობისას აჩვენებს fallback-ს.
+ */
+export class ErrorBoundary extends Component<Props, State> {
+  state: State = { failed: false };
+  private retries = 0;
+  private timer: number | undefined;
+
+  static getDerivedStateFromError(): State {
+    return { failed: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('UI შეცდომა:', error, info.componentStack);
+    if (this.retries < 3) {
+      this.retries += 1;
+      this.setState({ failed: false });
+      window.clearTimeout(this.timer);
+      this.timer = window.setTimeout(() => (this.retries = 0), 4000);
+    }
+  }
+
+  componentWillUnmount() {
+    window.clearTimeout(this.timer);
+  }
+
+  render() {
+    if (!this.state.failed) return this.props.children;
+    if (this.props.fallback !== undefined) return this.props.fallback;
+    return (
+      <div role="alert" className="flex min-h-screen flex-col items-center justify-center gap-4 bg-cream px-6 text-center text-espresso">
+        <h1 className="font-display text-3xl font-semibold">გვერდი ვერ ჩაიტვირთა</h1>
+        <p className="max-w-md">მოხდა მოულოდნელი შეცდომა. განაახლეთ გვერდი.</p>
+        <button type="button" className="min-h-11 rounded-lg bg-espresso px-5 font-semibold text-cream hover:bg-umber" onClick={() => window.location.reload()}>
+          განახლება
+        </button>
+      </div>
+    );
+  }
+}
