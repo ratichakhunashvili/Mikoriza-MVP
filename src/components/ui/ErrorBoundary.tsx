@@ -11,7 +11,7 @@ interface State {
 
 /**
  * შეცდომის შემდეგ ჯერ ავტომატურად ცდილობს თავიდან ჩატვირთვას (მომხმარებელი ამას ვერ ამჩნევს).
- * მხოლოდ განმეორებითი წარუმატებლობისას აჩვენებს fallback-ს.
+ * განმეორებითი შეცდომისას UI შეტყობინებას არ აჩვენებს.
  */
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { failed: false };
@@ -39,20 +39,6 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (!this.state.failed) return this.props.children;
     if (this.props.fallback !== undefined) return this.props.fallback;
-    return (
-      <div role="alert" className="fixed inset-x-4 top-4 z-[200] mx-auto flex max-w-lg items-center justify-between gap-4 rounded-xl border border-brick/30 bg-cream px-4 py-3 text-sm text-espresso shadow-lift">
-        <p>მოხდა მოულოდნელი შეცდომა. სცადეთ ხელახლა.</p>
-        <button
-          type="button"
-          className="min-h-11 shrink-0 rounded-lg bg-espresso px-4 font-semibold text-cream hover:bg-umber"
-          onClick={() => {
-            this.retries = 0;
-            this.setState({ failed: false });
-          }}
-        >
-          ხელახლა ცდა
-        </button>
-      </div>
-    );
+    return null;
   }
 }

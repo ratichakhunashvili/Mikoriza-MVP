@@ -25,7 +25,7 @@ describe('ErrorBoundary', () => {
     expect(screen.queryByText('გვერდი ვერ ჩაიტვირთა')).not.toBeInTheDocument();
   });
 
-  it('shows a compact retry alert instead of replacing the page after repeated failures', () => {
+  it('renders no popup after repeated failures', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     render(
       <ErrorBoundary>
@@ -33,8 +33,8 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>,
     );
 
-    expect(screen.getByRole('alert')).toHaveClass('fixed');
-    expect(screen.getByRole('button', { name: 'ხელახლა ცდა' })).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'ხელახლა ცდა' })).not.toBeInTheDocument();
     expect(screen.queryByText('გვერდი ვერ ჩაიტვირთა')).not.toBeInTheDocument();
   });
 });
