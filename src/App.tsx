@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { BrowserRouter, MemoryRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ToastProvider } from './components/ui/Toast';
@@ -12,8 +12,17 @@ const Router = import.meta.env.VITE_MEMORY_ROUTER ? MemoryRouter : BrowserRouter
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+  // ბლოკი {} აუცილებელია: ახალ ბრაუზერებში scrollTo Promise-ს აბრუნებს და React მას cleanup ფუნქციად ჩათვლიდა
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
   return null;
+}
+
+/** შეცდომის შემთხვევაში სხვა გვერდზე გადასვლა UI-ს თავიდან აღადგენს */
+function RouteErrorBoundary({ children }: { children: ReactNode }) {
+  const { pathname } = useLocation();
+  return <ErrorBoundary resetKey={pathname}>{children}</ErrorBoundary>;
 }
 
 export function AppRoutes() {
@@ -35,9 +44,9 @@ export default function App() {
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ToastProvider>
         <AdminProvider>
-          <ErrorBoundary>
+          <RouteErrorBoundary>
             <AppRoutes />
-          </ErrorBoundary>
+          </RouteErrorBoundary>
         </AdminProvider>
       </ToastProvider>
     </Router>

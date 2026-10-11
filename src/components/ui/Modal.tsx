@@ -13,14 +13,19 @@ interface Props {
 export function Modal({ open, title, onClose, children, footer, tone = 'light' }: Props) {
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
+  // onClose ხშირად ახალი ფუნქციაა ყოველ რენდერზე; ref-ით ვინახავთ, რომ ფოკუსი ყოველ განახლებაზე არ გადახტეს
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
 
   useEffect(() => {
     if (!open) return;
     const prev = document.activeElement as HTMLElement | null;
     const first = ref.current?.querySelector<HTMLElement>('input, select, textarea, button:not([data-close])');
     (first ?? ref.current)?.focus();
+    const scrollY = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') closeRef.current();
       if (e.key === 'Tab' && ref.current) {
         const f = Array.from(
           ref.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'),
@@ -40,9 +45,10 @@ export function Modal({ open, title, onClose, children, footer, tone = 'light' }
     document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = scrollY;
       prev?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
   const dark = tone === 'dark';

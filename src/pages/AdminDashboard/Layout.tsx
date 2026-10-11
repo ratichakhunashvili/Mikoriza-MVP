@@ -69,6 +69,13 @@ export default function Layout() {
     }, feedIdx === 0 ? 7000 : 18000);
     return () => window.clearTimeout(id);
   }, [feedOn, feedIdx, dispatch]);
+  useEffect(() => {
+    if (!bellOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setBellOpen(false);
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [bellOpen]);
+
   const recent = state.alerts
     .filter((a) => a.status !== 'resolved')
     .sort((a, b) => b.createdAt - a.createdAt)

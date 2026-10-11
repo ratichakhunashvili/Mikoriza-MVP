@@ -242,6 +242,7 @@ export function Footer() {
           </Link>
         </div>
       </div>
+      <p className="container-x mt-8 text-center text-sm text-espresso/70">Made by AppaRati And Ekuna</p>
     </footer>
   );
 }

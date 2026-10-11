@@ -276,6 +276,7 @@ export function reducer(s: AppState, a: Action): AppState {
     case 'releaseEmergency': {
       const denied = guard(s, 'emergency_stop');
       if (denied) return denied;
+      if (!s.emergencyStop) return s;
       const ctx = makeCtx(s, now);
       log(ctx, 'safety', 'საგანგებო გამორთვა გათავისუფლდა', actor, 'წარმატებით');
       queueToast(ctx, 'success', 'საგანგებო გამორთვა გათავისუფლებულია. ავტომატური რეჟიმი ჯერ გამორთულია.');
@@ -328,6 +329,9 @@ export function reducer(s: AppState, a: Action): AppState {
         ctx,
       );
       next = resolveByPrefix(next, `calib:${a.sensorId}`, actor, now);
+      // კალიბრაცია სენსორს აღადგენს, ამიტომ მასთან დაკავშირებული offline/დაზიანების გაფრთხილებებიც იხურება
+      next = resolveByPrefix(next, `offline:${a.sensorId}`, actor, now);
+      next = resolveByPrefix(next, `fault:${a.sensorId}`, actor, now);
       return next;
     }
     case 'addTask': {
@@ -420,9 +424,10 @@ interface Store {
 const Ctx = createContext<Store | null>(null);
 
 function initState(): AppState {
-  // პროტოტიპში ავტორიზაცია არ არის: პანელი პირდაპირ იხსნება ოპერატორის როლით
+  // პროტოტიპში ავტორიზაცია არ არის: პანელი იხსნება ადმინისტრატორის როლით, რომ ყველა ღილაკი ხელმისაწვდომი იყოს.
+  // შეზღუდული როლების საჩვენებლად როლი ზედა პანელიდან იცვლება.
   const s = createInitialState();
-  return { ...s, auth: { loggedIn: true, email: DEMO_EMAIL, role: 'operator' } };
+  return { ...s, auth: { loggedIn: true, email: DEMO_EMAIL, role: 'admin' } };
 }
 
 export function AdminProvider({ children }: { children: ReactNode }) {

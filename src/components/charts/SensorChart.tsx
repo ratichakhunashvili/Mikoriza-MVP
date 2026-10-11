@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import {
   Area,
   AreaChart,
@@ -28,6 +29,7 @@ interface Props {
 }
 
 export function SensorChart({ title, subtitle, unit, data, current, target, decimals = 1, axis, statusText, description }: Props) {
+  const gradId = `fill-${useId().replace(/:/g, '')}`;
   const now = data.length ? data[data.length - 1].t : Date.now();
   const series = [...data, { t: now + 5000, v: current }].map((p) => ({ ...p, v: +p.v.toFixed(2) }));
   const values = series.map((p) => p.v);
@@ -56,7 +58,7 @@ export function SensorChart({ title, subtitle, unit, data, current, target, deci
         <ResponsiveContainer width="100%" height="100%" minWidth={120} minHeight={120}>
           <AreaChart data={series} margin={{ top: 6, right: 8, bottom: 0, left: -18 }}>
             <defs>
-              <linearGradient id={`fill-${title}`} x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#6D5E51" stopOpacity={0.45} />
                 <stop offset="100%" stopColor="#6D5E51" stopOpacity={0.03} />
               </linearGradient>
@@ -97,7 +99,7 @@ export function SensorChart({ title, subtitle, unit, data, current, target, deci
                 );
               }}
             />
-            <Area type="monotone" dataKey="v" stroke="#2E211E" strokeWidth={2} fill={`url(#fill-${title})`} isAnimationActive={false} />
+            <Area type="monotone" dataKey="v" stroke="#2E211E" strokeWidth={2} fill={`url(#${gradId})`} isAnimationActive={false} />
             <ReferenceDot x={now + 5000} y={current} r={5} fill="#2E211E" stroke="#E2D9CC" strokeWidth={2} />
           </AreaChart>
         </ResponsiveContainer>

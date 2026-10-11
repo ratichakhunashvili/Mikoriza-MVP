@@ -157,11 +157,11 @@ describe('admin dashboard', () => {
     renderAt('/admin');
     await login(user);
     await user.click(nav(/ავტომატიზაცია/));
-    const sw = within(screen.getByTestId('rule-hum-low')).getByRole('switch');
-    expect(sw).toBeDisabled(); // ოპერატორს უფლება არ აქვს
-    await user.selectOptions(screen.getAllByLabelText('დემო როლი')[0], 'admin');
+    // პანელი ადმინისტრატორის როლით იხსნება, ამიტომ წესი მაშინვე იცვლება
     await user.click(within(screen.getByTestId('rule-hum-low')).getByRole('switch'));
     expect(within(screen.getByTestId('rule-hum-low')).getByRole('switch')).toHaveAttribute('aria-checked', 'false');
+    await user.selectOptions(screen.getAllByLabelText('დემო როლი')[0], 'operator');
+    expect(within(screen.getByTestId('rule-hum-low')).getByRole('switch')).toBeDisabled(); // ოპერატორს უფლება არ აქვს
     await user.selectOptions(screen.getAllByLabelText('დემო როლი')[0], 'viewer');
     await user.click(nav(/მოწყობილობები/));
     expect(within(screen.getByTestId('device-humidifier')).getByRole('button', { name: 'ჩართვა' })).toBeDisabled();
