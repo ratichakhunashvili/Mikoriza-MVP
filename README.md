@@ -32,6 +32,17 @@ npm run dev
 | `npm run build:single` | ერთი HTML ფაილი (`dist-single/index.html`), რომლის გაზიარებაც მარტივია |
 | `npm test` | ავტომატური ტესტები |
 
+## Vercel-ზე განთავსება
+
+პროექტის GitHub რეპოზიტორიის Vercel-ში იმპორტისას გამოიყენეთ ნაგულისხმევი პარამეტრები:
+
+- Framework Preset: **Vite**
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Install Command: `npm install` (ან Vercel-ის ავტომატური არჩევანი)
+
+ეს პარამეტრები `vercel.json`-შიც არის მითითებული. მისი rewrite წესი უზრუნველყოფს, რომ `/admin`-ის მსგავსი აპლიკაციის მარშრუტები პირდაპირ გახსნისა და განახლებისასაც სწორად ჩაიტვირთოს.
+
 ## სტრუქტურა
 
 ```
